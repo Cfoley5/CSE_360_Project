@@ -25,8 +25,13 @@ public class LoginPage extends Application {
 		
 		User user = new User("Name", "Pass");
 		
-		//Label studentLbl = new Label("Student");
-		//Label adminLbl = new Label("Admin");
+		primaryStage.setScene(createLoginScene(user));
+	
+        primaryStage.show();
+        
+    }
+	
+	public Scene createLoginScene(User user) {
 		
 		TextField idField = new TextField();
 		idField.setPromptText("ASU ID");
@@ -49,7 +54,7 @@ public class LoginPage extends Application {
 		Text loginTxt = new Text("Login");	
 		Text errorTxt = new Text("");
 		
-		// MEAL BUTTON ACTIONS //
+		// LOGIN BUTTON ACTIONS //
 		
 		loginBtn.setOnAction(a -> {
 			if(idField.getText().equalsIgnoreCase("") || passwordField.getText().equalsIgnoreCase("")) {
@@ -71,9 +76,6 @@ public class LoginPage extends Application {
 		grid.setHgap(5);
 		grid.setVgap(10);
 		grid.setPadding(new Insets(25, 25, 25, 25));
-
-		Scene scene = new Scene(grid, 500, 350);
-		primaryStage.setScene(scene);
 		
 		grid.add(logoTxt, 0, 0);
 		grid.add(storeNameTxt, 1, 1);
@@ -89,11 +91,8 @@ public class LoginPage extends Application {
 		
 		grid.add(errorTxt, 1, 7);
 		
-        primaryStage.setTitle("Login Page");
-        primaryStage.show();
-        
-
-    }
+		return new Scene(grid, 500, 350);
+	}
 	
 	
 	public Scene createSelectionScene(User user) {
@@ -114,6 +113,8 @@ public class LoginPage extends Application {
 		cont.setOnAction(e -> {
 				if(seller.isSelected()) {
 					user.changeScene(createSellerScene(), e);
+				} else if(buyer.isSelected()) {
+					user.changeScene(createBuyerScene(), e);
 				} else {
 					errorTxt.setText("Select a field");
 				}
@@ -137,33 +138,35 @@ public class LoginPage extends Application {
 		VBox root = new VBox();
 		GridPane grid = new GridPane();
 		
-		HBox listing = new HBox(10);
+		HBox listing = new HBox();
 		
+		TextField generatedPrice = new TextField("Price");
 		
+		root.getChildren().addAll(
+				new Label("Seller"),
+				grid, 
+				listing,
+				generatedPrice );
 		
-		// Book info
+		//Grid items
 		Label bookLabel = new Label("Book Information");
 		HBox title = new HBox(24);
-		Label titleLabel = new Label("Title:");
-		TextField titleText = new TextField();
-		titleText.setPromptText("Title");
-		title.getChildren().addAll(titleLabel, titleText);
-		
+		title.getChildren().addAll(
+				new Label("Title:"),
+				new TextField()
+				);
 		HBox author = new HBox(10);
-		Label authLabel = new Label("Author:");
-		TextField authText = new TextField();
-		authText.setPromptText("Author");
-		author.getChildren().addAll(authLabel, authText);
-		
+		author.getChildren().addAll(
+				new Label("Author:"),
+				new TextField()
+				);
 		HBox year = new HBox(23);
-		Label yearLabel = new Label("Year:");
-		TextField yearText = new TextField();
-		yearText.setPromptText("Year");
-		year.getChildren().addAll(yearLabel, yearText);
+		year.getChildren().addAll(
+				new Label("Year:"),
+				new TextField()
+				);
 		
 		Label priceLabel = new Label("Pricing Information");
-		
-		// Pricing info
 		
 		ChoiceBox<String> categoryBox = new ChoiceBox<>();
 		categoryBox.setValue("Select a category");
@@ -171,101 +174,8 @@ public class LoginPage extends Application {
 		ChoiceBox<String> conditionBox = new ChoiceBox<>();
 		conditionBox.setValue("Select a condition");
 		conditionBox.getItems().addAll("Used like new", "Moderately used", "Heavily used");
-		TextField originalPrice = new TextField();
-		originalPrice.setPromptText("Original Price");
+		TextField originalPrice = new TextField("Original Price");
 		
-		// Price generating and listing
-		Button listBook = new Button("List Book");
-		Button reset = new Button("Reset");
-		listBook.setDisable(true);
-		
-		TextField generatedPrice = new TextField();
-		generatedPrice.setPromptText("$USD");
-		generatedPrice.setEditable(false);
-		
-		Text errorTxt = new Text("");
-		
-		Button genPrice = new Button("Generate Price");
-		genPrice.setOnAction(e->{
-			
-			if(conditionBox.getSelectionModel().isEmpty() || categoryBox.getSelectionModel().isEmpty() || originalPrice.getText() == "" || 
-					titleText.getText() == "" || authText.getText() == "" || yearText.getText() == "") {
-				errorTxt.setText("Fill out all required fields");
-				return;
-			}
-			
-			final String inputPrice  = originalPrice.getText();
-			double price;
-			price = Double.parseDouble(inputPrice);
-			
-			if(conditionBox.getValue() == "Used like new") {
-				price = price * 0.9;
-			}
-			if(conditionBox.getValue() == "Moderately used") {
-				price = price * 0.7;
-			}
-			if(conditionBox.getValue() == "Heavily used") {
-				price = price * 0.5;
-			}
-			if(categoryBox.getValue() == "Natural Science") {
-				price = price * 0.99;
-			}
-			if(categoryBox.getValue() == "Computer") {
-				price = price * 0.98;
-			}
-			if(categoryBox.getValue() == "Math") {
-				price = price * 0.97;
-			}
-			if(categoryBox.getValue() == "English Language") {
-				price = price * 0.95;
-			}
-			
-			authText.setEditable(false);
-			yearText.setEditable(false);
-			titleText.setEditable(false);
-			conditionBox.setDisable(true);
-			categoryBox.setDisable(true);
-			originalPrice.setEditable(false);
-			
-			generatedPrice.setText(String.format("%.2f", price));
-			listBook.setDisable(false);
-		});
-		
-		listBook.setOnAction(e->{
-			System.out.println("need to complete");
-			
-		});
-		
-		reset.setOnAction(e->{
-			
-			authText.setEditable(true);
-			yearText.setEditable(true);
-			titleText.setEditable(true);
-			conditionBox.setDisable(false);
-			categoryBox.setDisable(false);
-			originalPrice.setEditable(true);
-			
-			authText.setText("");
-			yearText.setText("");
-			titleText.setText("");
-			conditionBox.setValue("");
-			categoryBox.setValue("");
-			originalPrice.setText("");
-			
-			generatedPrice.setText("");
-		});
-		
-		root.getChildren().addAll(
-				new Label("Seller"),
-				grid, 
-				listing,
-				generatedPrice,
-				errorTxt );
-		
-		VBox.setMargin(generatedPrice, new Insets(10));
-	
-		listing.getChildren().addAll(genPrice, listBook, reset);
-		listing.setAlignment(Pos.CENTER);
 		
 		grid.add(bookLabel, 0, 0);
 		grid.add(title, 0, 1);
@@ -287,6 +197,87 @@ public class LoginPage extends Application {
 		generatedPrice.setMaxWidth(200);
 		
 		return new Scene(root, 600, 400);
+	}
+	
+	private Scene createBuyerScene() {
+						
+		Text buyerLogoTxt = new Text("ASU");
+		Text buyerStoreNameTxt = new Text("Sun Devil Used Bookstore");
+		
+		ChoiceBox<String> categoryBox = new ChoiceBox<>();
+		categoryBox.setValue("Select a category");
+		categoryBox.getItems().addAll("Natural Science", "Computer", "Math", "English Language", "Other");
+		
+		CheckBox conditionNewCheck = new CheckBox("Used like new");
+		conditionNewCheck.setSelected(true);
+		CheckBox conditionModerateCheck = new CheckBox("Moderately used");
+		conditionModerateCheck.setSelected(true);
+		CheckBox conditionHeavyCheck = new CheckBox("Heavily used");
+		conditionHeavyCheck.setSelected(true);
+		
+		Text displayedListing1TitleAndYearTxt = new Text("Book Title" + " (Year)");
+		Text displayedListing1AuthorTxt = new Text("Author");
+		Text displayedListing1ConditionTxt = new Text("Condition");
+		Text displayedListing1PriceTxt = new Text("Price");
+		Button displayedListing1PurchaseBtn = new Button("Purchase");
+		
+		Text displayedListing2TitleAndYearTxt = new Text("Book Title" + " (Year)");
+		Text displayedListing2AuthorTxt = new Text("Author");
+		Text displayedListing2ConditionTxt = new Text("Condition");
+		Text displayedListing2PriceTxt = new Text("Price");
+		Button displayedListing2PurchaseBtn = new Button("Purchase");
+		
+		Text displayedListing3TitleAndYearTxt = new Text("Book Title" + " (Year)");
+		Text displayedListing3AuthorTxt = new Text("Author");
+		Text displayedListing3ConditionTxt = new Text("Condition");
+		Text displayedListing3PriceTxt = new Text("Price");
+		Button displayedListing3PurchaseBtn = new Button("Purchase");
+		
+		Text displayedListing4TitleAndYearTxt = new Text("Book Title" + " (Year)");
+		Text displayedListing4AuthorTxt = new Text("Author");
+		Text displayedListing4ConditionTxt = new Text("Condition");
+		Text displayedListing4PriceTxt = new Text("Price");
+		Button displayedListing4PurchaseBtn = new Button("Purchase");
+		
+		Button scrollBackBtn = new Button("<");
+		Button scrollForwardBtn = new Button(">");
+		
+		GridPane grid = new GridPane();
+		grid.setAlignment(null);
+		grid.setHgap(5);
+		grid.setVgap(10);
+		grid.setPadding(new Insets(25, 25, 25, 25));
+		
+		grid.add(buyerLogoTxt, 0, 0);
+		grid.add(buyerStoreNameTxt, 2, 0);
+		grid.add(categoryBox, 0, 1);
+		grid.add(conditionNewCheck, 2, 1);
+		grid.add(conditionModerateCheck, 3, 1);
+		grid.add(conditionHeavyCheck, 4, 1);
+		grid.add(displayedListing1TitleAndYearTxt, 0, 2);
+		grid.add(displayedListing1AuthorTxt, 0, 3);
+		grid.add(displayedListing1ConditionTxt, 3, 2);
+		grid.add(displayedListing1PriceTxt, 3, 3);
+		grid.add(displayedListing1PurchaseBtn, 4, 3);
+		grid.add(displayedListing2TitleAndYearTxt, 0, 4);
+		grid.add(displayedListing2AuthorTxt, 0, 5);
+		grid.add(displayedListing2ConditionTxt, 3, 4);
+		grid.add(displayedListing2PriceTxt, 3, 5);
+		grid.add(displayedListing2PurchaseBtn, 4, 5);
+		grid.add(displayedListing3TitleAndYearTxt, 0, 6);
+		grid.add(displayedListing3AuthorTxt, 0, 7);
+		grid.add(displayedListing3ConditionTxt, 3, 6);
+		grid.add(displayedListing3PriceTxt, 3, 7);
+		grid.add(displayedListing3PurchaseBtn, 4, 7);
+		grid.add(displayedListing4TitleAndYearTxt, 0, 8);
+		grid.add(displayedListing4AuthorTxt, 0, 9);
+		grid.add(displayedListing4ConditionTxt, 3, 8);
+		grid.add(displayedListing4PriceTxt, 3, 9);
+		grid.add(displayedListing4PurchaseBtn, 4, 9);
+		grid.add(scrollBackBtn, 2, 10);
+		grid.add(scrollForwardBtn, 3, 10);
+		
+		return new Scene(grid, 600, 400);
 	}
 	
 
