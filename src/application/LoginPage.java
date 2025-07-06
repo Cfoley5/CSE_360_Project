@@ -210,8 +210,38 @@ public class LoginPage extends Application {
 		categoryBox.getItems().addAll("Natural Science", "Computer", "Math", "English Language", "Other");
 		
 		CheckBox conditionNewCheck = new CheckBox("Used like new");
+		conditionNewCheck.setSelected(true);
 		CheckBox conditionModerateCheck = new CheckBox("Moderately used");
+		conditionModerateCheck.setSelected(true);
 		CheckBox conditionHeavyCheck = new CheckBox("Heavily used");
+		conditionHeavyCheck.setSelected(true);
+		
+		Text displayedListing1TitleAndYearTxt = new Text("Book Title" + " (Year)");
+		Text displayedListing1AuthorTxt = new Text("Author");
+		Text displayedListing1ConditionTxt = new Text("Condition");
+		Text displayedListing1PriceTxt = new Text("Price");
+		Button displayedListing1PurchaseBtn = new Button("Purchase");
+		
+		Text displayedListing2TitleAndYearTxt = new Text("Book Title" + " (Year)");
+		Text displayedListing2AuthorTxt = new Text("Author");
+		Text displayedListing2ConditionTxt = new Text("Condition");
+		Text displayedListing2PriceTxt = new Text("Price");
+		Button displayedListing2PurchaseBtn = new Button("Purchase");
+		
+		Text displayedListing3TitleAndYearTxt = new Text("Book Title" + " (Year)");
+		Text displayedListing3AuthorTxt = new Text("Author");
+		Text displayedListing3ConditionTxt = new Text("Condition");
+		Text displayedListing3PriceTxt = new Text("Price");
+		Button displayedListing3PurchaseBtn = new Button("Purchase");
+		
+		Text displayedListing4TitleAndYearTxt = new Text("Book Title" + " (Year)");
+		Text displayedListing4AuthorTxt = new Text("Author");
+		Text displayedListing4ConditionTxt = new Text("Condition");
+		Text displayedListing4PriceTxt = new Text("Price");
+		Button displayedListing4PurchaseBtn = new Button("Purchase");
+		
+		Button scrollBackBtn = new Button("<");
+		Button scrollForwardBtn = new Button(">");
 		
 		GridPane grid = new GridPane();
 		grid.setAlignment(null);
@@ -225,6 +255,28 @@ public class LoginPage extends Application {
 		grid.add(conditionNewCheck, 2, 1);
 		grid.add(conditionModerateCheck, 3, 1);
 		grid.add(conditionHeavyCheck, 4, 1);
+		grid.add(displayedListing1TitleAndYearTxt, 0, 2);
+		grid.add(displayedListing1AuthorTxt, 0, 3);
+		grid.add(displayedListing1ConditionTxt, 3, 2);
+		grid.add(displayedListing1PriceTxt, 3, 3);
+		grid.add(displayedListing1PurchaseBtn, 4, 3);
+		grid.add(displayedListing2TitleAndYearTxt, 0, 4);
+		grid.add(displayedListing2AuthorTxt, 0, 5);
+		grid.add(displayedListing2ConditionTxt, 3, 4);
+		grid.add(displayedListing2PriceTxt, 3, 5);
+		grid.add(displayedListing2PurchaseBtn, 4, 5);
+		grid.add(displayedListing3TitleAndYearTxt, 0, 6);
+		grid.add(displayedListing3AuthorTxt, 0, 7);
+		grid.add(displayedListing3ConditionTxt, 3, 6);
+		grid.add(displayedListing3PriceTxt, 3, 7);
+		grid.add(displayedListing3PurchaseBtn, 4, 7);
+		grid.add(displayedListing4TitleAndYearTxt, 0, 8);
+		grid.add(displayedListing4AuthorTxt, 0, 9);
+		grid.add(displayedListing4ConditionTxt, 3, 8);
+		grid.add(displayedListing4PriceTxt, 3, 9);
+		grid.add(displayedListing4PurchaseBtn, 4, 9);
+		grid.add(scrollBackBtn, 2, 10);
+		grid.add(scrollForwardBtn, 3, 10);
 		
 		return new Scene(grid, 600, 400);
 	}
