@@ -137,35 +137,33 @@ public class LoginPage extends Application {
 		VBox root = new VBox();
 		GridPane grid = new GridPane();
 		
-		HBox listing = new HBox();
+		HBox listing = new HBox(10);
 		
-		TextField generatedPrice = new TextField("Price");
 		
-		root.getChildren().addAll(
-				new Label("Seller"),
-				grid, 
-				listing,
-				generatedPrice );
 		
-		//Grid items
+		// Book info
 		Label bookLabel = new Label("Book Information");
 		HBox title = new HBox(24);
-		title.getChildren().addAll(
-				new Label("Title:"),
-				new TextField()
-				);
+		Label titleLabel = new Label("Title:");
+		TextField titleText = new TextField();
+		titleText.setPromptText("Title");
+		title.getChildren().addAll(titleLabel, titleText);
+		
 		HBox author = new HBox(10);
-		author.getChildren().addAll(
-				new Label("Author:"),
-				new TextField()
-				);
+		Label authLabel = new Label("Author:");
+		TextField authText = new TextField();
+		authText.setPromptText("Author");
+		author.getChildren().addAll(authLabel, authText);
+		
 		HBox year = new HBox(23);
-		year.getChildren().addAll(
-				new Label("Year:"),
-				new TextField()
-				);
+		Label yearLabel = new Label("Year:");
+		TextField yearText = new TextField();
+		yearText.setPromptText("Year");
+		year.getChildren().addAll(yearLabel, yearText);
 		
 		Label priceLabel = new Label("Pricing Information");
+		
+		// Pricing info
 		
 		ChoiceBox<String> categoryBox = new ChoiceBox<>();
 		categoryBox.setValue("Select a category");
@@ -173,8 +171,101 @@ public class LoginPage extends Application {
 		ChoiceBox<String> conditionBox = new ChoiceBox<>();
 		conditionBox.setValue("Select a condition");
 		conditionBox.getItems().addAll("Used like new", "Moderately used", "Heavily used");
-		TextField originalPrice = new TextField("Original Price");
+		TextField originalPrice = new TextField();
+		originalPrice.setPromptText("Original Price");
 		
+		// Price generating and listing
+		Button listBook = new Button("List Book");
+		Button reset = new Button("Reset");
+		listBook.setDisable(true);
+		
+		TextField generatedPrice = new TextField();
+		generatedPrice.setPromptText("$USD");
+		generatedPrice.setEditable(false);
+		
+		Text errorTxt = new Text("");
+		
+		Button genPrice = new Button("Generate Price");
+		genPrice.setOnAction(e->{
+			
+			if(conditionBox.getSelectionModel().isEmpty() || categoryBox.getSelectionModel().isEmpty() || originalPrice.getText() == "" || 
+					titleText.getText() == "" || authText.getText() == "" || yearText.getText() == "") {
+				errorTxt.setText("Fill out all required fields");
+				return;
+			}
+			
+			final String inputPrice  = originalPrice.getText();
+			double price;
+			price = Double.parseDouble(inputPrice);
+			
+			if(conditionBox.getValue() == "Used like new") {
+				price = price * 0.9;
+			}
+			if(conditionBox.getValue() == "Moderately used") {
+				price = price * 0.7;
+			}
+			if(conditionBox.getValue() == "Heavily used") {
+				price = price * 0.5;
+			}
+			if(categoryBox.getValue() == "Natural Science") {
+				price = price * 0.99;
+			}
+			if(categoryBox.getValue() == "Computer") {
+				price = price * 0.98;
+			}
+			if(categoryBox.getValue() == "Math") {
+				price = price * 0.97;
+			}
+			if(categoryBox.getValue() == "English Language") {
+				price = price * 0.95;
+			}
+			
+			authText.setEditable(false);
+			yearText.setEditable(false);
+			titleText.setEditable(false);
+			conditionBox.setDisable(true);
+			categoryBox.setDisable(true);
+			originalPrice.setEditable(false);
+			
+			generatedPrice.setText(String.format("%.2f", price));
+			listBook.setDisable(false);
+		});
+		
+		listBook.setOnAction(e->{
+			System.out.println("need to complete");
+			
+		});
+		
+		reset.setOnAction(e->{
+			
+			authText.setEditable(true);
+			yearText.setEditable(true);
+			titleText.setEditable(true);
+			conditionBox.setDisable(false);
+			categoryBox.setDisable(false);
+			originalPrice.setEditable(true);
+			
+			authText.setText("");
+			yearText.setText("");
+			titleText.setText("");
+			conditionBox.setValue("");
+			categoryBox.setValue("");
+			originalPrice.setText("");
+			
+			generatedPrice.setText("");
+		});
+		
+		root.getChildren().addAll(
+				new Label("Seller"),
+				grid, 
+				listing,
+				generatedPrice,
+				errorTxt );
+		
+		VBox.setMargin(generatedPrice, new Insets(10));
+	
+		listing.getChildren().addAll(genPrice, listBook, reset);
+		listing.setAlignment(Pos.CENTER);
 		
 		grid.add(bookLabel, 0, 0);
 		grid.add(title, 0, 1);
