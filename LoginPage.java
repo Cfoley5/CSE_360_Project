@@ -1,9 +1,11 @@
 package application;
 
 import javafx.application.Application;
+import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.stage.Stage;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.text.*;
@@ -20,6 +22,8 @@ public class LoginPage extends Application {
 	
 	@Override
     public void start(Stage primaryStage) {
+		
+		User user = new User("Name", "Pass");
 		
 		//Label studentLbl = new Label("Student");
 		//Label adminLbl = new Label("Admin");
@@ -45,7 +49,6 @@ public class LoginPage extends Application {
 		Text loginTxt = new Text("Login");	
 		Text errorTxt = new Text("");
 		
-		
 		// MEAL BUTTON ACTIONS //
 		
 		loginBtn.setOnAction(a -> {
@@ -57,7 +60,7 @@ public class LoginPage extends Application {
 			}
 			else {
 				errorTxt.setText("Tada! You logged in, this concludes the prototype");
-				primaryStage.setScene(createSellerScene());
+				user.changeScene(createSelectionScene(user), a);
 			}
         });
 	
@@ -91,6 +94,43 @@ public class LoginPage extends Application {
         
 
     }
+	
+	
+	public Scene createSelectionScene(User user) {
+		
+		VBox root = new VBox(50);
+		
+		HBox choices = new HBox(250);
+		RadioButton buyer = new RadioButton("Buyer");
+		RadioButton seller = new RadioButton("Seller");
+		choices.getChildren().addAll(buyer, seller);
+		
+		ToggleGroup group = new ToggleGroup();
+		buyer.setToggleGroup(group);
+		seller.setToggleGroup(group);
+		Text errorTxt = new Text("");
+		
+		Button cont = new Button("Continue");
+		cont.setOnAction(e -> {
+				if(seller.isSelected()) {
+					user.changeScene(createSellerScene(), e);
+				} else {
+					errorTxt.setText("Select a field");
+				}
+		});
+		
+		root.getChildren().addAll(
+				new Label("Sun Devil Used Bookstore"),
+				new Label("Select"),
+				choices,
+				errorTxt,
+				cont
+				);
+		
+		root.setAlignment(Pos.CENTER);
+		root.setPadding(new Insets(50));
+		return new Scene(root, 500, 300);
+	}
 	
 	private Scene createSellerScene() {
 		
@@ -128,8 +168,10 @@ public class LoginPage extends Application {
 		Label priceLabel = new Label("Pricing Information");
 		
 		ChoiceBox<String> categoryBox = new ChoiceBox<>();
+		categoryBox.setValue("Select a category");
 		categoryBox.getItems().addAll("Natural Science", "Computer", "Math", "English Language", "Other");
 		ChoiceBox<String> conditionBox = new ChoiceBox<>();
+		conditionBox.setValue("Select a condition");
 		conditionBox.getItems().addAll("Used like new", "Moderately used", "Heavily used");
 		TextField originalPrice = new TextField("Original Price");
 		
