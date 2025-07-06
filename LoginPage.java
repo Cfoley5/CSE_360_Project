@@ -175,6 +175,28 @@ public class LoginPage extends Application {
 		conditionBox.getItems().addAll("Used like new", "Moderately used", "Heavily used");
 		TextField originalPrice = new TextField("Original Price");
 		
+		Button genPrice = new Button("Generate Price");
+		genPrice.setOnAction(e->{
+			final String inputPrice  = originalPrice.getText();
+			double price;
+			price = Double.parseDouble(inputPrice);
+			
+			if(conditionBox.getValue() == "Used like new") {
+				price = price * 0.9;
+			}
+			if(conditionBox.getValue() == "Moderately used") {
+				price = price * 0.7;
+			}
+			if(conditionBox.getValue() == "Heavily used") {
+				price = price * 0.5;
+			}
+			String finalPrice = Double.toString(price);
+			generatedPrice.setText(finalPrice);
+			//System.out.println(price);
+		});
+		
+		listing.getChildren().addAll(genPrice);
+		listing.setAlignment(Pos.CENTER);
 		
 		grid.add(bookLabel, 0, 0);
 		grid.add(title, 0, 1);
