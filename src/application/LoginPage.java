@@ -89,7 +89,7 @@ public class LoginPage extends Application {
 		
 		grid.add(errorTxt, 1, 7);
 		
-        primaryStage.setTitle("Login Page");
+        //primaryStage.setTitle("Login Page");
         primaryStage.show();
         
 
@@ -114,6 +114,8 @@ public class LoginPage extends Application {
 		cont.setOnAction(e -> {
 				if(seller.isSelected()) {
 					user.changeScene(createSellerScene(), e);
+				} else if(buyer.isSelected()) {
+					user.changeScene(createBuyerScene(), e);
 				} else {
 					errorTxt.setText("Select a field");
 				}
@@ -196,6 +198,35 @@ public class LoginPage extends Application {
 		generatedPrice.setMaxWidth(200);
 		
 		return new Scene(root, 600, 400);
+	}
+	
+	private Scene createBuyerScene() {
+						
+		Text buyerLogoTxt = new Text("ASU");
+		Text buyerStoreNameTxt = new Text("Sun Devil Used Bookstore");
+		
+		ChoiceBox<String> categoryBox = new ChoiceBox<>();
+		categoryBox.setValue("Select a category");
+		categoryBox.getItems().addAll("Natural Science", "Computer", "Math", "English Language", "Other");
+		
+		CheckBox conditionNewCheck = new CheckBox("Used like new");
+		CheckBox conditionModerateCheck = new CheckBox("Moderately used");
+		CheckBox conditionHeavyCheck = new CheckBox("Heavily used");
+		
+		GridPane grid = new GridPane();
+		grid.setAlignment(null);
+		grid.setHgap(5);
+		grid.setVgap(10);
+		grid.setPadding(new Insets(25, 25, 25, 25));
+		
+		grid.add(buyerLogoTxt, 0, 0);
+		grid.add(buyerStoreNameTxt, 2, 0);
+		grid.add(categoryBox, 0, 1);
+		grid.add(conditionNewCheck, 2, 1);
+		grid.add(conditionModerateCheck, 3, 1);
+		grid.add(conditionHeavyCheck, 4, 1);
+		
+		return new Scene(grid, 600, 400);
 	}
 	
 
