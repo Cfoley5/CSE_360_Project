@@ -25,8 +25,13 @@ public class LoginPage extends Application {
 		
 		User user = new User("Name", "Pass");
 		
-		//Label studentLbl = new Label("Student");
-		//Label adminLbl = new Label("Admin");
+		primaryStage.setScene(createLoginScene(user));
+	
+        primaryStage.show();
+        
+    }
+	
+	public Scene createLoginScene(User user) {
 		
 		TextField idField = new TextField();
 		idField.setPromptText("ASU ID");
@@ -49,7 +54,7 @@ public class LoginPage extends Application {
 		Text loginTxt = new Text("Login");	
 		Text errorTxt = new Text("");
 		
-		// MEAL BUTTON ACTIONS //
+		// LOGIN BUTTON ACTIONS //
 		
 		loginBtn.setOnAction(a -> {
 			if(idField.getText().equalsIgnoreCase("") || passwordField.getText().equalsIgnoreCase("")) {
@@ -71,9 +76,6 @@ public class LoginPage extends Application {
 		grid.setHgap(5);
 		grid.setVgap(10);
 		grid.setPadding(new Insets(25, 25, 25, 25));
-
-		Scene scene = new Scene(grid, 500, 350);
-		primaryStage.setScene(scene);
 		
 		grid.add(logoTxt, 0, 0);
 		grid.add(storeNameTxt, 1, 1);
@@ -89,11 +91,8 @@ public class LoginPage extends Application {
 		
 		grid.add(errorTxt, 1, 7);
 		
-        //primaryStage.setTitle("Login Page");
-        primaryStage.show();
-        
-
-    }
+		return new Scene(grid, 500, 350);
+	}
 	
 	
 	public Scene createSelectionScene(User user) {
