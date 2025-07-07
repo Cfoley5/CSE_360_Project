@@ -5,15 +5,15 @@ public class Listing {
 	private Book book;
 	private String condition;
 	private float generatedPrice;
-	private Student seller;
+	private User seller;
 	private boolean isActive;
 	private boolean isPurchased;
 
-	public Listing(Book book, String condition, float generatedPrice, Student seller) {
+	public Listing(Book book, String condition, float generatedPrice, User user) {
 		this.book = book;
 		this.condition = condition;
 		this.generatedPrice = generatedPrice;
-		this.seller = seller;
+		this.seller = user;
 		isActive = true;
 		isPurchased = false;
 	}
@@ -29,8 +29,8 @@ public class Listing {
 	public float getGeneratedPrice() {
 		return generatedPrice;
 	}
-
-	public Student getSeller() {
+	
+	public User getSeller() {
 		return seller;
 	}
 

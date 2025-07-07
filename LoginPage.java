@@ -25,13 +25,15 @@ public class LoginPage extends Application {
 		
 		User user = new User("Name", "Pass");
 		
-		primaryStage.setScene(createLoginScene(user));
-
+		Library library = new Library();
+		
+		primaryStage.setScene(createLoginScene(user, library));
+		
         primaryStage.show();
 
     }
 
-	public Scene createLoginScene(User user) {
+	public Scene createLoginScene(User user, Library library) {
 		TextField idField = new TextField();
 		idField.setPromptText("ASU ID");
 		TextField passwordField = new TextField();
@@ -62,9 +64,11 @@ public class LoginPage extends Application {
 			else if(studentAdmin.getSelectedToggle() == null) {
 				errorTxt.setText("Please select Student or Admin role to continue");
 			}
-			else {
-				errorTxt.setText("Tada! You logged in, this concludes the prototype");
-				user.changeScene(createSelectionScene(user), a);
+			else if(studentAdmin.getSelectedToggle() == adminBtn){
+				user.changeScene(createAdminScene(user, library), a);
+			}
+			else if(studentAdmin.getSelectedToggle() == studentBtn) {
+				user.changeScene(createSelectionScene(user, library), a);
 			}
         });
 	
@@ -94,7 +98,7 @@ public class LoginPage extends Application {
 	}
 	
 	
-	public Scene createSelectionScene(User user) {
+	public Scene createSelectionScene(User user, Library library) {
 		
 		VBox root = new VBox(50);
 		
@@ -111,9 +115,9 @@ public class LoginPage extends Application {
 		Button cont = new Button("Continue");
 		cont.setOnAction(e -> {
 				if(seller.isSelected()) {
-					user.changeScene(createSellerScene(), e);
+					user.changeScene(createSellerScene(user, library), e);
 				} else if(buyer.isSelected()) {
-					user.changeScene(createBuyerScene(), e);
+					user.changeScene(createBuyerScene(user, library), e);
 				} else {
 					errorTxt.setText("Select a field");
 				}
@@ -132,7 +136,7 @@ public class LoginPage extends Application {
 		return new Scene(root, 500, 300);
 	}
 	
-	private Scene createSellerScene() {
+	private Scene createSellerScene(User user, Library library) {
 		
 		VBox root = new VBox();
 		GridPane grid = new GridPane();
@@ -232,7 +236,24 @@ public class LoginPage extends Application {
 		});
 		
 		listBook.setOnAction(e->{
-			System.out.println("need to complete");
+			authText.setEditable(true);
+			yearText.setEditable(true);
+			titleText.setEditable(true);
+			conditionBox.setDisable(false);
+			categoryBox.setDisable(false);
+			originalPrice.setEditable(true);
+			
+			authText.setText("");
+			yearText.setText("");
+			titleText.setText("");
+			conditionBox.setValue("");
+			categoryBox.setValue("");
+			originalPrice.setText("");
+			
+			generatedPrice.setText("");
+			
+			library.createNewListing(titleText.getText(), authText.getText(), Integer.parseInt(yearText.getText()), categoryBox.getValue(), conditionBox.getValue(),
+					Float.parseFloat(originalPrice.getText()), Float.parseFloat(generatedPrice.getText()), user);
 			
 		});
 		
@@ -290,7 +311,7 @@ public class LoginPage extends Application {
 	}
 	
 	
-	private Scene createBuyerScene() {
+	private Scene createBuyerScene(User user, Library library) {
 
 		Text buyerLogoTxt = new Text("ASU");
 		Text buyerStoreNameTxt = new Text("Sun Devil Used Bookstore");
@@ -369,6 +390,44 @@ public class LoginPage extends Application {
 		grid.add(scrollForwardBtn, 3, 10);
 
 		return new Scene(grid, 600, 400);
+	}
+	
+	private Scene createAdminScene(User user, Library library) {
+		
+		GridPane root = new GridPane();
+		root.setHgap(10);
+		root.setVgap(40);
+		root.setPadding(new Insets(10));
+		
+		Text asu = new Text("ASU");
+		Text adminView = new Text("Sun Devil Used Bookstore Admin");
+		Text dashSummary = new Text("Dashboard Summary");
+		Text dashListings = new Text("Active Listings:");
+		Text dashUsers = new Text("Total Users:");
+		Text dashBooks = new Text("Total Sales:");
+		
+		dashSummary.setFont(new Font(18));
+		
+		Button mngListings = new Button("Manage Listings");
+		Button mngUsers = new Button("Manager Users");
+		mngUsers.setMinHeight(10);
+		mngUsers.setMinWidth(10);
+		
+		Button logOut = new Button("Logout");
+		
+		root.add(asu, 0, 0);
+		root.add(adminView, 3, 0);
+		root.add(dashSummary, 5, 1);
+		root.add(dashListings, 5, 2);
+		root.add(dashUsers, 5, 3);
+		root.add(dashBooks, 5, 4);
+		root.add(mngListings, 1, 2);
+		root.add(mngUsers, 1, 4);
+		root.add(logOut, 6, 6);
+	
+		
+		
+		return new Scene(root, 600, 400);
 	}
 	
 
