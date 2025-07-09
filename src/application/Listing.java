@@ -5,11 +5,11 @@ public class Listing {
 	private Book book;
 	private String condition;
 	private float generatedPrice;
-	private Student seller;
+	private User seller;
 	private boolean isActive;
 	private boolean isPurchased;
 	
-	public Listing(Book book, String condition, float generatedPrice, Student seller) {
+	public Listing(Book book, String condition, float generatedPrice, User seller) {
 		this.book = book;
 		this.condition = condition;
 		this.generatedPrice = generatedPrice;
@@ -30,7 +30,7 @@ public class Listing {
 		return generatedPrice;
 	}
 	
-	public Student getSeller() {
+	public User getSeller() {
 		return seller;
 	}
 	
@@ -50,8 +50,9 @@ public class Listing {
 		isActive = false;
 	}
 	
-	public void setPurchased() {
+	private void setPurchased() {
 		isPurchased = true;
+		setInactive();
 	}
 	
 	public void setNotPurchased() {
