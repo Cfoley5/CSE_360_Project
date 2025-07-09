@@ -4,6 +4,7 @@ import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -26,6 +27,9 @@ public class LoginPage extends Application {
 		User user = new User("Name", "Pass");
 		
 		Library library = new Library();
+		
+		library.createNewListing("Words of Radiance", "Brandon Sanderson", 2014, "Other", "Used like new",
+				19.99f, 17.99f, user);
 		
 		primaryStage.setScene(createLoginScene(user, library));
 		
@@ -99,9 +103,7 @@ public class LoginPage extends Application {
 	
 	
 	public Scene createSelectionScene(User user, Library library) {
-		
 		VBox root = new VBox(50);
-		
 		HBox choices = new HBox(250);
 		RadioButton buyer = new RadioButton("Buyer");
 		RadioButton seller = new RadioButton("Seller");
@@ -236,6 +238,12 @@ public class LoginPage extends Application {
 		});
 		
 		listBook.setOnAction(e->{
+			
+			library.createNewListing(titleText.getText(), authText.getText(), Integer.parseInt(yearText.getText()), categoryBox.getValue(), conditionBox.getValue(),
+					Float.parseFloat(originalPrice.getText()), Float.parseFloat(generatedPrice.getText()), user);
+			Stage stage = (Stage) root.getScene().getWindow();
+			FileSys.fileWrite(FileSys.fileChoose("Listings"), stage, "Testing testing for book app");
+			
 			authText.setEditable(true);
 			yearText.setEditable(true);
 			titleText.setEditable(true);
@@ -252,8 +260,6 @@ public class LoginPage extends Application {
 			
 			generatedPrice.setText("");
 			
-			library.createNewListing(titleText.getText(), authText.getText(), Integer.parseInt(yearText.getText()), categoryBox.getValue(), conditionBox.getValue(),
-					Float.parseFloat(originalPrice.getText()), Float.parseFloat(generatedPrice.getText()), user);
 			
 		});
 		
@@ -415,6 +421,19 @@ public class LoginPage extends Application {
 		
 		Button logOut = new Button("Logout");
 		
+		mngListings.setOnAction(e->{
+			Stage stage = (Stage) root.getScene().getWindow();
+			FileSys.fileWrite(FileSys.fileChoose("Listings"), stage, "Testing additional append for book app");
+		});
+		
+		mngUsers.setOnAction(e->{
+			
+		});
+
+		logOut.setOnAction(e->{
+			user.changeScene(createLoginScene(user, library), e);
+		});
+		
 		root.add(asu, 0, 0);
 		root.add(adminView, 3, 0);
 		root.add(dashSummary, 5, 1);
@@ -429,6 +448,8 @@ public class LoginPage extends Application {
 		
 		return new Scene(root, 600, 400);
 	}
+	
+	
 	
 
 }
