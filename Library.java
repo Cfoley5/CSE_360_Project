@@ -13,7 +13,7 @@ public class Library {
 	}
 
 	public void createNewListing(String title, String author, int year, String category, String condition,
-			float originalPrice, float generatedPrice, Student seller) {
+			float originalPrice, float generatedPrice, User seller) {
 		if(!bookAlreadyExists(title, author, year)) {
 			createNewBook(category, originalPrice, title, author, year);
 		}
@@ -49,7 +49,7 @@ public class Library {
 		bookList.add(new Book(category, originalPrice, title, author, year));
 	}
 
-	private void createListing(int book, String condition, float generatedPrice, Student seller) {
+	private void createListing(int book, String condition, float generatedPrice, User seller) {
 		activeListings.add(new Listing(bookList.get(book), condition, generatedPrice, seller));
 
 	}
