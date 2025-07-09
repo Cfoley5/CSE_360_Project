@@ -208,6 +208,8 @@ public class LoginPage extends Application {
 		
 		Text errorTxt = new Text("");
 		
+		Button logoutBtn = new Button("Logout");
+		
 		Button genPrice = new Button("Generate Price");
 		genPrice.setOnAction(e->{
 			
@@ -299,6 +301,11 @@ public class LoginPage extends Application {
 			generatedPrice.setText("");
 		});
 		
+
+		logoutBtn.setOnAction(e->{
+			user.changeScene(createLoginScene(user, library), e);
+		});
+		
 		root.getChildren().addAll(
 				new Label("Seller"),
 				grid, 
@@ -320,6 +327,7 @@ public class LoginPage extends Application {
 		grid.add(categoryBox, 1, 1);
 		grid.add(conditionBox, 1, 2);
 		grid.add(originalPrice, 1, 3);
+		grid.add(logoutBtn, 1, 5);
 		
 		grid.setHgap(100);
 		grid.setVgap(10);
@@ -352,8 +360,6 @@ public class LoginPage extends Application {
 		CheckBox conditionHeavyCheck = new CheckBox("Heavily used");
 		conditionHeavyCheck.setSelected(true);
 		
-		//ArrayList<Listing> relevantListings = library.loadRelevantListings(categoryBox.getValue(), conditionNewCheck.isSelected(), conditionModerateCheck.isSelected(), conditionHeavyCheck.isSelected());
-
 		Text displayedListing1TitleAndYearTxt = new Text("Book Title" + " (Year)");
 		Text displayedListing1AuthorTxt = new Text("Author");
 		Text displayedListing1ConditionTxt = new Text("Condition");
@@ -380,6 +386,7 @@ public class LoginPage extends Application {
 
 		Button scrollBackBtn = new Button("<");
 		Button scrollForwardBtn = new Button(">");
+		Button logoutBtn = new Button("Logout");
 		
 		relevantListings = library.loadRelevantListings(categoryBox.getValue(), conditionNewCheck.isSelected(), conditionModerateCheck.isSelected(), conditionHeavyCheck.isSelected());
 		pageNumber = 0; // helps keep track of which four listings to display
@@ -424,6 +431,7 @@ public class LoginPage extends Application {
 		grid.add(displayedListing4PurchaseBtn, 4, 9);
 		grid.add(scrollBackBtn, 2, 10);
 		grid.add(scrollForwardBtn, 3, 10);
+		grid.add(logoutBtn, 4, 10);
 		
 		scrollBackBtn.setOnAction(a -> {
 			if(pageNumber > 0) {
@@ -541,6 +549,10 @@ public class LoginPage extends Application {
 						displayedListing3TitleAndYearTxt, displayedListing3AuthorTxt, displayedListing3ConditionTxt, displayedListing3PriceTxt,
 						displayedListing4TitleAndYearTxt, displayedListing4AuthorTxt, displayedListing4ConditionTxt, displayedListing4PriceTxt);
 			}
+		});
+		
+		logoutBtn.setOnAction(e->{
+			user.changeScene(createLoginScene(user, library), e);
 		});
 		
 		return new Scene(grid, 600, 400);
