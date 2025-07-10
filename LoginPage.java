@@ -1,11 +1,9 @@
 package application;
 
 import javafx.application.Application;
-import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.stage.Stage;
-import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.text.*;
@@ -24,9 +22,12 @@ public class LoginPage extends Application {
 	@Override
     public void start(Stage primaryStage) {
 		
-		User user = new User("Name", "Pass");
+		User user = new User("Name", "Pass", true);
 		
 		Library library = new Library();
+		
+		library.addNewUser("testStudent", "password", false);
+		library.addNewUser("testAdmin", "password123", true);
 		
 		library.createNewListing("Words of Radiance", "Brandon Sanderson", 2014, "Other", "Used like new",
 				19.99f, 17.99f, user);
@@ -87,6 +88,25 @@ public class LoginPage extends Application {
 			}
 			else if(studentAdmin.getSelectedToggle() == null) {
 				errorTxt.setText("Please select Student or Admin role to continue");
+			} else {
+				int loginAttempt = library.authenticateLogin(idField.getText(), passwordField.getText(), studentAdmin.getSelectedToggle() == adminBtn, studentAdmin.getSelectedToggle() == studentBtn);
+				if(loginAttempt == 0) {
+					if(studentAdmin.getSelectedToggle() == adminBtn){
+						user.changeScene(createAdminScene(user, library), a);
+					}
+					else if(studentAdmin.getSelectedToggle() == studentBtn) {
+						user.changeScene(createSelectionScene(user, library), a);
+					}
+				} else {
+					errorTxt.setText("Incorrect ASU ID or password");
+				}
+			}
+			/*
+			if(idField.getText().equalsIgnoreCase("") || passwordField.getText().equalsIgnoreCase("")) {
+				errorTxt.setText("Incorrect ASU ID or password");
+			}
+			else if(studentAdmin.getSelectedToggle() == null) {
+				errorTxt.setText("Please select Student or Admin role to continue");
 			}
 			else if(studentAdmin.getSelectedToggle() == adminBtn){
 				user.changeScene(createAdminScene(user, library), a);
@@ -94,6 +114,7 @@ public class LoginPage extends Application {
 			else if(studentAdmin.getSelectedToggle() == studentBtn) {
 				user.changeScene(createSelectionScene(user, library), a);
 			}
+			*/
         });
 	
 		// add to scene //
@@ -597,9 +618,9 @@ public class LoginPage extends Application {
 		Text asu = new Text("ASU");
 		Text adminView = new Text("Sun Devil Used Bookstore Admin");
 		Text dashSummary = new Text("Dashboard Summary");
-		Text dashListings = new Text("Active Listings:");
-		Text dashUsers = new Text("Total Users:");
-		Text dashBooks = new Text("Total Sales:");
+		Text dashListings = new Text("Active Listings: " + library.getNumberActiveListings());
+		Text dashUsers = new Text("Total Users: " + library.getNumberUsers());
+		Text dashBooks = new Text("Total Sales: " + library.getNumberPurchasedListings());
 		
 		dashSummary.setFont(new Font(18));
 		
@@ -611,7 +632,7 @@ public class LoginPage extends Application {
 		Button logOut = new Button("Logout");
 		
 		mngListings.setOnAction(e->{
-			
+			user.changeScene(createManageListingsScene(user, library), e);
 		});
 		
 		mngUsers.setOnAction(e->{
@@ -635,6 +656,227 @@ public class LoginPage extends Application {
 		
 		
 		return new Scene(root, 600, 400);
+	}
+	
+	private Scene createManageListingsScene(User user, Library library) {
+
+		Text logoTxt = new Text("ASU");
+		Text storeNameTxt = new Text("Sun Devil Used Bookstore");
+
+		ChoiceBox<String> categoryBox = new ChoiceBox<>();
+		categoryBox.setValue("Select a category");
+		categoryBox.getItems().addAll("Select a category", "Natural Science", "Computer", "Math", "English Language", "Other");
+
+		CheckBox conditionNewCheck = new CheckBox("Used like new");
+		conditionNewCheck.setSelected(true);
+		CheckBox conditionModerateCheck = new CheckBox("Moderately used");
+		conditionModerateCheck.setSelected(true);
+		CheckBox conditionHeavyCheck = new CheckBox("Heavily used");
+		conditionHeavyCheck.setSelected(true);
+
+		Text displayedListing1TitleAndYearTxt = new Text("Book Title" + " (Year)");
+		Text displayedListing1AuthorTxt = new Text("Author");
+		Text displayedListing1ConditionTxt = new Text("Condition");
+		Text displayedListing1PriceTxt = new Text("Price");
+		Button displayedListing1RemoveBtn = new Button("Remove");
+
+		Text displayedListing2TitleAndYearTxt = new Text("Book Title" + " (Year)");
+		Text displayedListing2AuthorTxt = new Text("Author");
+		Text displayedListing2ConditionTxt = new Text("Condition");
+		Text displayedListing2PriceTxt = new Text("Price");
+		Button displayedListing2RemoveBtn = new Button("Remove");
+
+		Text displayedListing3TitleAndYearTxt = new Text("Book Title" + " (Year)");
+		Text displayedListing3AuthorTxt = new Text("Author");
+		Text displayedListing3ConditionTxt = new Text("Condition");
+		Text displayedListing3PriceTxt = new Text("Price");
+		Button displayedListing3RemoveBtn = new Button("Remove");
+
+		Text displayedListing4TitleAndYearTxt = new Text("Book Title" + " (Year)");
+		Text displayedListing4AuthorTxt = new Text("Author");
+		Text displayedListing4ConditionTxt = new Text("Condition");
+		Text displayedListing4PriceTxt = new Text("Price");
+		Button displayedListing4RemoveBtn = new Button("Remove");
+
+		Button scrollBackBtn = new Button("<");
+		Button scrollForwardBtn = new Button(">");
+		Button backPageBtn = new Button("Back");
+		Button logoutBtn = new Button("Logout");
+
+		relevantListings = library.loadRelevantListings(categoryBox.getValue(), conditionNewCheck.isSelected(), conditionModerateCheck.isSelected(), conditionHeavyCheck.isSelected());
+		pageNumber = 0; // helps keep track of which four listings to display
+
+		updateAllListingDisplayText(relevantListings, pageNumber, 
+				displayedListing1TitleAndYearTxt, displayedListing1AuthorTxt, displayedListing1ConditionTxt, displayedListing1PriceTxt, 
+				displayedListing2TitleAndYearTxt, displayedListing2AuthorTxt, displayedListing2ConditionTxt, displayedListing2PriceTxt,
+				displayedListing3TitleAndYearTxt, displayedListing3AuthorTxt, displayedListing3ConditionTxt, displayedListing3PriceTxt,
+				displayedListing4TitleAndYearTxt, displayedListing4AuthorTxt, displayedListing4ConditionTxt, displayedListing4PriceTxt);
+
+		GridPane grid = new GridPane();
+		grid.setAlignment(null);
+		grid.setHgap(5);
+		grid.setVgap(10);
+		grid.setPadding(new Insets(25, 25, 25, 25));
+
+		grid.add(logoTxt, 0, 0);
+		grid.add(storeNameTxt, 2, 0);
+		grid.add(categoryBox, 0, 1);
+		grid.add(conditionNewCheck, 2, 1);
+		grid.add(conditionModerateCheck, 3, 1);
+		grid.add(conditionHeavyCheck, 4, 1);
+		grid.add(displayedListing1TitleAndYearTxt, 0, 2);
+		grid.add(displayedListing1AuthorTxt, 0, 3);
+		grid.add(displayedListing1ConditionTxt, 3, 2);
+		grid.add(displayedListing1PriceTxt, 3, 3);
+		grid.add(displayedListing1RemoveBtn, 4, 3);
+		grid.add(displayedListing2TitleAndYearTxt, 0, 4);
+		grid.add(displayedListing2AuthorTxt, 0, 5);
+		grid.add(displayedListing2ConditionTxt, 3, 4);
+		grid.add(displayedListing2PriceTxt, 3, 5);
+		grid.add(displayedListing2RemoveBtn, 4, 5);
+		grid.add(displayedListing3TitleAndYearTxt, 0, 6);
+		grid.add(displayedListing3AuthorTxt, 0, 7);
+		grid.add(displayedListing3ConditionTxt, 3, 6);
+		grid.add(displayedListing3PriceTxt, 3, 7);
+		grid.add(displayedListing3RemoveBtn, 4, 7);
+		grid.add(displayedListing4TitleAndYearTxt, 0, 8);
+		grid.add(displayedListing4AuthorTxt, 0, 9);
+		grid.add(displayedListing4ConditionTxt, 3, 8);
+		grid.add(displayedListing4PriceTxt, 3, 9);
+		grid.add(displayedListing4RemoveBtn, 4, 9);
+		grid.add(scrollBackBtn, 2, 10);
+		grid.add(scrollForwardBtn, 3, 10);
+		grid.add(logoutBtn, 4, 10);
+		grid.add(backPageBtn, 0, 10);
+
+		scrollBackBtn.setOnAction(a -> {
+			if(pageNumber > 0) {
+				pageNumber -= 1;
+				updateAllListingDisplayText(relevantListings, pageNumber, 
+						displayedListing1TitleAndYearTxt, displayedListing1AuthorTxt, displayedListing1ConditionTxt, displayedListing1PriceTxt, 
+						displayedListing2TitleAndYearTxt, displayedListing2AuthorTxt, displayedListing2ConditionTxt, displayedListing2PriceTxt,
+						displayedListing3TitleAndYearTxt, displayedListing3AuthorTxt, displayedListing3ConditionTxt, displayedListing3PriceTxt,
+						displayedListing4TitleAndYearTxt, displayedListing4AuthorTxt, displayedListing4ConditionTxt, displayedListing4PriceTxt);
+			}
+        });
+
+		scrollForwardBtn.setOnAction(a -> {
+			if(relevantListings.size() > (pageNumber+1)*4) {
+				pageNumber += 1;
+				updateAllListingDisplayText(relevantListings, pageNumber, 
+						displayedListing1TitleAndYearTxt, displayedListing1AuthorTxt, displayedListing1ConditionTxt, displayedListing1PriceTxt, 
+						displayedListing2TitleAndYearTxt, displayedListing2AuthorTxt, displayedListing2ConditionTxt, displayedListing2PriceTxt,
+						displayedListing3TitleAndYearTxt, displayedListing3AuthorTxt, displayedListing3ConditionTxt, displayedListing3PriceTxt,
+						displayedListing4TitleAndYearTxt, displayedListing4AuthorTxt, displayedListing4ConditionTxt, displayedListing4PriceTxt);
+			}
+        });
+
+		conditionNewCheck.setOnAction(a -> {
+			pageNumber = 0;
+			relevantListings = library.loadRelevantListings(categoryBox.getValue(), conditionNewCheck.isSelected(), conditionModerateCheck.isSelected(), conditionHeavyCheck.isSelected());
+			updateAllListingDisplayText(relevantListings, pageNumber, 
+					displayedListing1TitleAndYearTxt, displayedListing1AuthorTxt, displayedListing1ConditionTxt, displayedListing1PriceTxt, 
+					displayedListing2TitleAndYearTxt, displayedListing2AuthorTxt, displayedListing2ConditionTxt, displayedListing2PriceTxt,
+					displayedListing3TitleAndYearTxt, displayedListing3AuthorTxt, displayedListing3ConditionTxt, displayedListing3PriceTxt,
+					displayedListing4TitleAndYearTxt, displayedListing4AuthorTxt, displayedListing4ConditionTxt, displayedListing4PriceTxt);
+        });
+
+		conditionModerateCheck.setOnAction(a -> {
+			pageNumber = 0;
+			relevantListings = library.loadRelevantListings(categoryBox.getValue(), conditionNewCheck.isSelected(), conditionModerateCheck.isSelected(), conditionHeavyCheck.isSelected());
+			updateAllListingDisplayText(relevantListings, pageNumber, 
+					displayedListing1TitleAndYearTxt, displayedListing1AuthorTxt, displayedListing1ConditionTxt, displayedListing1PriceTxt, 
+					displayedListing2TitleAndYearTxt, displayedListing2AuthorTxt, displayedListing2ConditionTxt, displayedListing2PriceTxt,
+					displayedListing3TitleAndYearTxt, displayedListing3AuthorTxt, displayedListing3ConditionTxt, displayedListing3PriceTxt,
+					displayedListing4TitleAndYearTxt, displayedListing4AuthorTxt, displayedListing4ConditionTxt, displayedListing4PriceTxt);
+        });
+
+		conditionHeavyCheck.setOnAction(a -> {
+			pageNumber = 0;
+			relevantListings = library.loadRelevantListings(categoryBox.getValue(), conditionNewCheck.isSelected(), conditionModerateCheck.isSelected(), conditionHeavyCheck.isSelected());
+			updateAllListingDisplayText(relevantListings, pageNumber, 
+					displayedListing1TitleAndYearTxt, displayedListing1AuthorTxt, displayedListing1ConditionTxt, displayedListing1PriceTxt, 
+					displayedListing2TitleAndYearTxt, displayedListing2AuthorTxt, displayedListing2ConditionTxt, displayedListing2PriceTxt,
+					displayedListing3TitleAndYearTxt, displayedListing3AuthorTxt, displayedListing3ConditionTxt, displayedListing3PriceTxt,
+					displayedListing4TitleAndYearTxt, displayedListing4AuthorTxt, displayedListing4ConditionTxt, displayedListing4PriceTxt);
+        });
+
+		categoryBox.setOnAction(a -> {
+			pageNumber = 0;
+			relevantListings = library.loadRelevantListings(categoryBox.getValue(), conditionNewCheck.isSelected(), conditionModerateCheck.isSelected(), conditionHeavyCheck.isSelected());
+			updateAllListingDisplayText(relevantListings, pageNumber, 
+					displayedListing1TitleAndYearTxt, displayedListing1AuthorTxt, displayedListing1ConditionTxt, displayedListing1PriceTxt, 
+					displayedListing2TitleAndYearTxt, displayedListing2AuthorTxt, displayedListing2ConditionTxt, displayedListing2PriceTxt,
+					displayedListing3TitleAndYearTxt, displayedListing3AuthorTxt, displayedListing3ConditionTxt, displayedListing3PriceTxt,
+					displayedListing4TitleAndYearTxt, displayedListing4AuthorTxt, displayedListing4ConditionTxt, displayedListing4PriceTxt);
+        });
+
+		displayedListing1RemoveBtn.setOnAction(a -> {
+			//pageNumber = 0;
+			if(!displayedListing1TitleAndYearTxt.getText().equals("")) {
+				library.removeListing(relevantListings.get(pageNumber*4 + 0));
+				relevantListings = library.loadRelevantListings(categoryBox.getValue(), conditionNewCheck.isSelected(), conditionModerateCheck.isSelected(), conditionHeavyCheck.isSelected());
+				if(displayedListing2TitleAndYearTxt.getText().equals("")) {
+					pageNumber -= 1;
+				}
+
+				updateAllListingDisplayText(relevantListings, pageNumber, 
+						displayedListing1TitleAndYearTxt, displayedListing1AuthorTxt, displayedListing1ConditionTxt, displayedListing1PriceTxt, 
+						displayedListing2TitleAndYearTxt, displayedListing2AuthorTxt, displayedListing2ConditionTxt, displayedListing2PriceTxt,
+						displayedListing3TitleAndYearTxt, displayedListing3AuthorTxt, displayedListing3ConditionTxt, displayedListing3PriceTxt,
+						displayedListing4TitleAndYearTxt, displayedListing4AuthorTxt, displayedListing4ConditionTxt, displayedListing4PriceTxt);
+			}
+		});
+
+		displayedListing2RemoveBtn.setOnAction(a -> {
+			//pageNumber = 0;
+			if(!displayedListing2TitleAndYearTxt.getText().equals("")) {
+				library.removeListing(relevantListings.get(pageNumber*4 + 1));
+				relevantListings = library.loadRelevantListings(categoryBox.getValue(), conditionNewCheck.isSelected(), conditionModerateCheck.isSelected(), conditionHeavyCheck.isSelected());
+				updateAllListingDisplayText(relevantListings, pageNumber, 
+						displayedListing1TitleAndYearTxt, displayedListing1AuthorTxt, displayedListing1ConditionTxt, displayedListing1PriceTxt, 
+						displayedListing2TitleAndYearTxt, displayedListing2AuthorTxt, displayedListing2ConditionTxt, displayedListing2PriceTxt,
+						displayedListing3TitleAndYearTxt, displayedListing3AuthorTxt, displayedListing3ConditionTxt, displayedListing3PriceTxt,
+						displayedListing4TitleAndYearTxt, displayedListing4AuthorTxt, displayedListing4ConditionTxt, displayedListing4PriceTxt);
+			}
+		});
+
+		displayedListing3RemoveBtn.setOnAction(a -> {
+			//pageNumber = 0;
+			if(!displayedListing3TitleAndYearTxt.getText().equals("")) {
+				library.removeListing(relevantListings.get(pageNumber*4 + 2));
+				relevantListings = library.loadRelevantListings(categoryBox.getValue(), conditionNewCheck.isSelected(), conditionModerateCheck.isSelected(), conditionHeavyCheck.isSelected());
+				updateAllListingDisplayText(relevantListings, pageNumber, 
+						displayedListing1TitleAndYearTxt, displayedListing1AuthorTxt, displayedListing1ConditionTxt, displayedListing1PriceTxt, 
+						displayedListing2TitleAndYearTxt, displayedListing2AuthorTxt, displayedListing2ConditionTxt, displayedListing2PriceTxt,
+						displayedListing3TitleAndYearTxt, displayedListing3AuthorTxt, displayedListing3ConditionTxt, displayedListing3PriceTxt,
+						displayedListing4TitleAndYearTxt, displayedListing4AuthorTxt, displayedListing4ConditionTxt, displayedListing4PriceTxt);
+			}
+		});
+
+		displayedListing4RemoveBtn.setOnAction(a -> {
+			//pageNumber = 0;
+			if(!displayedListing4TitleAndYearTxt.getText().equals("")) {
+				library.removeListing(relevantListings.get(pageNumber*4 + 3));
+				relevantListings = library.loadRelevantListings(categoryBox.getValue(), conditionNewCheck.isSelected(), conditionModerateCheck.isSelected(), conditionHeavyCheck.isSelected());
+				updateAllListingDisplayText(relevantListings, pageNumber, 
+						displayedListing1TitleAndYearTxt, displayedListing1AuthorTxt, displayedListing1ConditionTxt, displayedListing1PriceTxt, 
+						displayedListing2TitleAndYearTxt, displayedListing2AuthorTxt, displayedListing2ConditionTxt, displayedListing2PriceTxt,
+						displayedListing3TitleAndYearTxt, displayedListing3AuthorTxt, displayedListing3ConditionTxt, displayedListing3PriceTxt,
+						displayedListing4TitleAndYearTxt, displayedListing4AuthorTxt, displayedListing4ConditionTxt, displayedListing4PriceTxt);
+			}
+		});
+
+		logoutBtn.setOnAction(e->{
+			user.changeScene(createLoginScene(user, library), e);
+		});
+
+		backPageBtn.setOnAction(e->{
+			user.changeScene(createAdminScene(user, library), e);
+		});
+
+		return new Scene(grid, 600, 400);
+
 	}
 
 }

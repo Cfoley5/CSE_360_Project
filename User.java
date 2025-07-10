@@ -9,10 +9,12 @@ public class User {
 	
 	private String AsuriteID;
 	private String password;
+	private boolean isAdmin;
 	
-	public User(String AsuriteID, String password) {
+	public User(String AsuriteID, String password, boolean isAdmin) {
 		this.AsuriteID = AsuriteID;
 		this.password = password;
+		this.isAdmin = isAdmin;
 	}
 	
 	public void changeScene(Scene scene, ActionEvent event) {
@@ -25,8 +27,16 @@ public class User {
 		System.out.println("Hi");
 	}
 	
-	public String getID() {
+	public String getAsuriteID() {
 		return AsuriteID;
+	}
+	
+	public String getPassword() {
+		return password;
+	}
+	
+	public boolean getIsAdmin() {
+		return isAdmin;
 	}
 	
 	
