@@ -26,27 +26,29 @@ public class LoginPage extends Application {
 		
 		Library library = new Library();
 		
-		library.addNewUser("testStudent", "password", false);
-		library.addNewUser("testAdmin", "password123", true);
+		library.addNewUser("Admin", "password", true);
+		library.addNewUser("Caden", "password123", false);
+		library.addNewUser("Amy", "password456", false);
+		library.addNewUser("Example", "password789", false);
 		
-		library.createNewListing("Words of Radiance", "Brandon Sanderson", 2014, "Other", "Used like new",
+		library.createNewListing("Fiction book", "Fiction author", 2014, "Other", "Used like new",
 				19.99f, 17.99f, user);
 		
-		library.createNewListing("two", "Brandon Sanderson", 2014, "Other", "Used like new",
+		library.createNewListing("Biology Textbook", "Dr Bio", 2012, "Natural Science", "Heavily used",
 				19.99f, 17.99f, user);
-		library.createNewListing("three", "Brandon Sanderson", 2014, "Other", "Used like new",
+		library.createNewListing("Coding Textbook", "Dr Computer", 2019, "Computer", "Heavily used",
 				19.99f, 17.99f, user);
-		library.createNewListing("four", "Brandon Sanderson", 2014, "Other", "Used like new",
+		library.createNewListing("Calculus Textbook", "Dr Math", 2010, "Math", "Used like new",
 				19.99f, 17.99f, user);
-		library.createNewListing("five", "Brandon Sanderson", 2014, "Other", "Used like new",
+		library.createNewListing("Grammar Textbook", "Dr English", 2015, "English Language", "Moderately used",
 				19.99f, 17.99f, user);
-		library.createNewListing("six", "Brandon Sanderson", 2014, "Other", "Used like new",
+		library.createNewListing("Calculus 2 Textbook", "Dr Math", 2014, "Math", "Heavily used",
 				19.99f, 17.99f, user);
-		library.createNewListing("seven", "Brandon Sanderson", 2014, "Other", "Used like new",
+		library.createNewListing("Physics Textbook", "Dr Phys", 2011, "Natural Science", "Moderately used",
 				19.99f, 17.99f, user);
-		library.createNewListing("eight", "Brandon Sanderson", 2014, "Other", "Used like new",
+		library.createNewListing("Data Structures", "Dr Computer", 2020, "Computer", "Used like new",
 				19.99f, 17.99f, user);
-		library.createNewListing("nine", "Brandon Sanderson", 2014, "Other", "Moderately used",
+		library.createNewListing("Algorithms", "Dr Computer", 2021, "Computer", "Moderately used",
 				19.99f, 17.99f, user);
 		
 		FileSys.fileWrite("C:\\ASU Used Bookstore Files\\Sales records.txt", "");
@@ -636,7 +638,7 @@ public class LoginPage extends Application {
 		});
 		
 		mngUsers.setOnAction(e->{
-			
+			user.changeScene(createManageUsersScene(user, library), e);
 		});
 
 		logOut.setOnAction(e->{
@@ -877,6 +879,244 @@ public class LoginPage extends Application {
 
 		return new Scene(grid, 600, 400);
 
+	}
+	
+	ArrayList<User> relevantUsers;
+	private Scene createManageUsersScene(User user, Library library) {
+
+		Text logoTxt = new Text("ASU");
+		Text storeNameTxt = new Text("Sun Devil Used Bookstore");
+
+		ChoiceBox<String> rolesBox = new ChoiceBox<>();
+		rolesBox.setValue("Filter by role");
+		rolesBox.getItems().addAll("Filter by role", "Student", "Admin");
+
+		Text displayedUser1IDTxt = new Text("AsuriteID");
+		Text displayedUser1RoleTxt = new Text("role");
+		Button displayedUser1ToggleRoleBtn = new Button("Toggle Role");
+		Button displayedUser1RemoveBtn = new Button("Remove user");
+
+		Text displayedUser2IDTxt = new Text("AsuriteID");
+		Text displayedUser2RoleTxt = new Text("role");
+		Button displayedUser2ToggleRoleBtn = new Button("Toggle Role");
+		Button displayedUser2RemoveBtn = new Button("Remove user");
+
+		Text displayedUser3IDTxt = new Text("AsuriteID");
+		Text displayedUser3RoleTxt = new Text("role");
+		Button displayedUser3ToggleRoleBtn = new Button("Toggle Role");
+		Button displayedUser3RemoveBtn = new Button("Remove user");
+
+		Text displayedUser4IDTxt = new Text("AsuriteID");
+		Text displayedUser4RoleTxt = new Text("role");
+		Button displayedUser4ToggleRoleBtn = new Button("Toggle Role");
+		Button displayedUser4RemoveBtn = new Button("Remove user");
+
+		Button scrollBackBtn = new Button("<");
+		Button scrollForwardBtn = new Button(">");
+		Button backPageBtn = new Button("Back");
+		Button logoutBtn = new Button("Logout");
+
+		relevantUsers = library.loadRelevantUsers(rolesBox.getValue());
+		pageNumber = 0; // helps keep track of which four listings to display
+
+		updateAllUserDisplayText(relevantUsers, pageNumber, 
+				displayedUser1IDTxt, displayedUser1RoleTxt, displayedUser2IDTxt, displayedUser2RoleTxt, 
+				displayedUser3IDTxt, displayedUser3RoleTxt, displayedUser4IDTxt, displayedUser4RoleTxt);
+
+		GridPane grid = new GridPane();
+		grid.setAlignment(null);
+		grid.setHgap(5);
+		grid.setVgap(10);
+		grid.setPadding(new Insets(25, 25, 25, 25));
+
+		grid.add(logoTxt, 0, 0);
+		grid.add(storeNameTxt, 2, 0);
+		grid.add(rolesBox, 0, 1);
+
+		grid.add(displayedUser1IDTxt, 0, 2);
+		grid.add(displayedUser1RoleTxt, 1, 2);
+		grid.add(displayedUser1RemoveBtn, 4, 2);
+		grid.add(displayedUser1ToggleRoleBtn, 3, 2);
+
+		grid.add(displayedUser2IDTxt, 0, 4);
+		grid.add(displayedUser2RoleTxt, 1, 4);
+		grid.add(displayedUser2RemoveBtn, 4, 4);
+		grid.add(displayedUser2ToggleRoleBtn, 3, 4);
+
+		grid.add(displayedUser3IDTxt, 0, 6);
+		grid.add(displayedUser3RoleTxt, 1, 6);
+		grid.add(displayedUser3RemoveBtn, 4, 6);
+		grid.add(displayedUser3ToggleRoleBtn, 3, 6);
+
+		grid.add(displayedUser4IDTxt, 0, 8);
+		grid.add(displayedUser4RoleTxt, 1, 8);
+		grid.add(displayedUser4RemoveBtn, 4, 8);
+		grid.add(displayedUser4ToggleRoleBtn, 3, 8);
+
+		grid.add(scrollBackBtn, 2, 10);
+		grid.add(scrollForwardBtn, 3, 10);
+		grid.add(logoutBtn, 4, 10);
+		grid.add(backPageBtn, 0, 10);
+
+		scrollBackBtn.setOnAction(a -> {
+			if(pageNumber > 0) {
+				pageNumber -= 1;
+				updateAllUserDisplayText(relevantUsers, pageNumber, 
+						displayedUser1IDTxt, displayedUser1RoleTxt, displayedUser2IDTxt, displayedUser2RoleTxt, 
+						displayedUser3IDTxt, displayedUser3RoleTxt, displayedUser4IDTxt, displayedUser4RoleTxt);
+			}
+        });
+
+		scrollForwardBtn.setOnAction(a -> {
+			if(relevantUsers.size() > (pageNumber+1)*4) {
+				pageNumber += 1;
+				updateAllUserDisplayText(relevantUsers, pageNumber, 
+						displayedUser1IDTxt, displayedUser1RoleTxt, displayedUser2IDTxt, displayedUser2RoleTxt, 
+						displayedUser3IDTxt, displayedUser3RoleTxt, displayedUser4IDTxt, displayedUser4RoleTxt);
+			}
+        });
+
+		rolesBox.setOnAction(a -> {
+			pageNumber = 0;
+			relevantUsers = library.loadRelevantUsers(rolesBox.getValue());
+			updateAllUserDisplayText(relevantUsers, pageNumber, 
+					displayedUser1IDTxt, displayedUser1RoleTxt, displayedUser2IDTxt, displayedUser2RoleTxt, 
+					displayedUser3IDTxt, displayedUser3RoleTxt, displayedUser4IDTxt, displayedUser4RoleTxt);
+        });
+
+		displayedUser1ToggleRoleBtn.setOnAction(a -> {
+			//pageNumber = 0;
+			if(!displayedUser1IDTxt.getText().equals("")) {
+				library.toggleUserRole(relevantUsers.get(pageNumber*4 + 0));
+				relevantUsers = library.loadRelevantUsers(rolesBox.getValue());
+
+				updateAllUserDisplayText(relevantUsers, pageNumber, 
+						displayedUser1IDTxt, displayedUser1RoleTxt, displayedUser2IDTxt, displayedUser2RoleTxt, 
+						displayedUser3IDTxt, displayedUser3RoleTxt, displayedUser4IDTxt, displayedUser4RoleTxt);
+			}
+		});
+
+		displayedUser2ToggleRoleBtn.setOnAction(a -> {
+			//pageNumber = 0;
+			if(!displayedUser1IDTxt.getText().equals("")) {
+				library.toggleUserRole(relevantUsers.get(pageNumber*4 + 1));
+				relevantUsers = library.loadRelevantUsers(rolesBox.getValue());
+
+				updateAllUserDisplayText(relevantUsers, pageNumber, 
+						displayedUser1IDTxt, displayedUser1RoleTxt, displayedUser2IDTxt, displayedUser2RoleTxt, 
+						displayedUser3IDTxt, displayedUser3RoleTxt, displayedUser4IDTxt, displayedUser4RoleTxt);
+			}
+		});
+
+		displayedUser3ToggleRoleBtn.setOnAction(a -> {
+			//pageNumber = 0;
+			if(!displayedUser1IDTxt.getText().equals("")) {
+				library.toggleUserRole(relevantUsers.get(pageNumber*4 + 2));
+				relevantUsers = library.loadRelevantUsers(rolesBox.getValue());
+
+				updateAllUserDisplayText(relevantUsers, pageNumber, 
+						displayedUser1IDTxt, displayedUser1RoleTxt, displayedUser2IDTxt, displayedUser2RoleTxt, 
+						displayedUser3IDTxt, displayedUser3RoleTxt, displayedUser4IDTxt, displayedUser4RoleTxt);
+			}
+		});
+
+		displayedUser4ToggleRoleBtn.setOnAction(a -> {
+			//pageNumber = 0;
+			if(!displayedUser1IDTxt.getText().equals("")) {
+				library.toggleUserRole(relevantUsers.get(pageNumber*4 + 3));
+				relevantUsers = library.loadRelevantUsers(rolesBox.getValue());
+
+				updateAllUserDisplayText(relevantUsers, pageNumber, 
+						displayedUser1IDTxt, displayedUser1RoleTxt, displayedUser2IDTxt, displayedUser2RoleTxt, 
+						displayedUser3IDTxt, displayedUser3RoleTxt, displayedUser4IDTxt, displayedUser4RoleTxt);
+			}
+		});
+
+		displayedUser1RemoveBtn.setOnAction(a -> {
+			//pageNumber = 0;
+			if(!displayedUser1IDTxt.getText().equals("")) {
+				library.removeUser(relevantUsers.get(pageNumber*4 + 1));
+				relevantUsers = library.loadRelevantUsers(rolesBox.getValue());
+
+				updateAllUserDisplayText(relevantUsers, pageNumber, 
+						displayedUser1IDTxt, displayedUser1RoleTxt, displayedUser2IDTxt, displayedUser2RoleTxt, 
+						displayedUser3IDTxt, displayedUser3RoleTxt, displayedUser4IDTxt, displayedUser4RoleTxt);
+			}
+		});
+
+		displayedUser2RemoveBtn.setOnAction(a -> {
+			//pageNumber = 0;
+			if(!displayedUser1IDTxt.getText().equals("")) {
+				library.removeUser(relevantUsers.get(pageNumber*4 + 1));
+				relevantUsers = library.loadRelevantUsers(rolesBox.getValue());
+
+				updateAllUserDisplayText(relevantUsers, pageNumber, 
+						displayedUser1IDTxt, displayedUser1RoleTxt, displayedUser2IDTxt, displayedUser2RoleTxt, 
+						displayedUser3IDTxt, displayedUser3RoleTxt, displayedUser4IDTxt, displayedUser4RoleTxt);
+			}
+		});
+
+		displayedUser3RemoveBtn.setOnAction(a -> {
+			//pageNumber = 0;
+			if(!displayedUser1IDTxt.getText().equals("")) {
+				library.removeUser(relevantUsers.get(pageNumber*4 + 2));
+				relevantUsers = library.loadRelevantUsers(rolesBox.getValue());
+
+				updateAllUserDisplayText(relevantUsers, pageNumber, 
+						displayedUser1IDTxt, displayedUser1RoleTxt, displayedUser2IDTxt, displayedUser2RoleTxt, 
+						displayedUser3IDTxt, displayedUser3RoleTxt, displayedUser4IDTxt, displayedUser4RoleTxt);
+			}
+		});
+
+		displayedUser4RemoveBtn.setOnAction(a -> {
+			//pageNumber = 0;
+			if(!displayedUser1IDTxt.getText().equals("")) {
+				library.removeUser(relevantUsers.get(pageNumber*4 + 3));
+				relevantUsers = library.loadRelevantUsers(rolesBox.getValue());
+
+				updateAllUserDisplayText(relevantUsers, pageNumber, 
+						displayedUser1IDTxt, displayedUser1RoleTxt, displayedUser2IDTxt, displayedUser2RoleTxt, 
+						displayedUser3IDTxt, displayedUser3RoleTxt, displayedUser4IDTxt, displayedUser4RoleTxt);
+			}
+		});
+
+		logoutBtn.setOnAction(e->{
+			user.changeScene(createLoginScene(user, library), e);
+		});
+
+		backPageBtn.setOnAction(e->{
+			user.changeScene(createAdminScene(user, library), e);
+		});
+
+		return new Scene(grid, 600, 400);
+	}
+
+	public void updateAllUserDisplayText(ArrayList<User> relevantUsers, int pageNumber, 
+			Text displayedUser1IDTxt, Text displayedUser1RoleTxt,
+			Text displayedUser2IDTxt, Text displayedUser2RoleTxt,
+			Text displayedUser3IDTxt, Text displayedUser3RoleTxt,
+			Text displayedUser4IDTxt, Text displayedUser4RoleTxt) {
+		updateUserDisplayText(relevantUsers, pageNumber, 0, displayedUser1IDTxt, displayedUser1RoleTxt);
+		updateUserDisplayText(relevantUsers, pageNumber, 1, displayedUser2IDTxt, displayedUser2RoleTxt);
+		updateUserDisplayText(relevantUsers, pageNumber, 2, displayedUser3IDTxt, displayedUser3RoleTxt);
+		updateUserDisplayText(relevantUsers, pageNumber, 3, displayedUser4IDTxt, displayedUser4RoleTxt);
+	}
+
+	public void updateUserDisplayText(ArrayList<User> relevantUsers, int pageNumber, int position, Text IDTxt, Text RoleTxt) {
+		int index = pageNumber*4 + position;
+
+		if(index <= relevantUsers.size() - 1 && relevantUsers.size() != 0) {
+			User displayUser = relevantUsers.get(index);
+			IDTxt.setText(displayUser.getAsuriteID());
+			if(displayUser.getIsAdmin()) {
+				RoleTxt.setText("Admin");
+			} else {
+				RoleTxt.setText("Student");
+			}
+		} else {
+			IDTxt.setText("");
+			RoleTxt.setText("");
+		}
 	}
 
 }
