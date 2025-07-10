@@ -8,24 +8,24 @@ public class Listing {
 	private User seller;
 	private boolean isActive;
 	private boolean isPurchased;
-
-	public Listing(Book book, String condition, float generatedPrice, User user) {
+	
+	public Listing(Book book, String condition, float generatedPrice, User seller) {
 		this.book = book;
 		this.condition = condition;
 		this.generatedPrice = generatedPrice;
-		this.seller = user;
+		this.seller = seller;
 		isActive = true;
 		isPurchased = false;
 	}
-
+	
 	public Book getBook() {
 		return book;
 	}
-
+	
 	public String getCondition() {
 		return condition;
 	}
-
+	
 	public float getGeneratedPrice() {
 		return generatedPrice;
 	}
@@ -33,31 +33,32 @@ public class Listing {
 	public User getSeller() {
 		return seller;
 	}
-
+	
 	public boolean getIsActive() {
 		return isActive;
 	}
-
+	
 	public boolean getIsPurchased() {
 		return isPurchased;
 	}
-
+	
 	public void setActive() {
 		isActive = true;
 	}
-
+	
 	public void setInactive() {
 		isActive = false;
 	}
-
-	public void setPurchased() {
+	
+	private void setPurchased() {
 		isPurchased = true;
+		setInactive();
 	}
-
+	
 	public void setNotPurchased() {
 		isPurchased = false;
 	}
-
+	
 	public void purchaseListing() {
 		setPurchased();
 		// create record of transaction here
