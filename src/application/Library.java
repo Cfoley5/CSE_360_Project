@@ -12,6 +12,10 @@ public class Library {
 		// load any books and listings from text file / database
 	}
 	
+	public int getNumberActiveListings() {
+		return activeListings.size();
+	}
+	
 	public void createNewListing(String title, String author, int year, String category, String condition,
 			float originalPrice, float generatedPrice, User seller) {
 		if(!bookAlreadyExists(title, author, year)) {

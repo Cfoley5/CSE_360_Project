@@ -597,7 +597,7 @@ public class LoginPage extends Application {
 		Text asu = new Text("ASU");
 		Text adminView = new Text("Sun Devil Used Bookstore Admin");
 		Text dashSummary = new Text("Dashboard Summary");
-		Text dashListings = new Text("Active Listings:");
+		Text dashListings = new Text("Active Listings: " + library.getNumberActiveListings());
 		Text dashUsers = new Text("Total Users:");
 		Text dashBooks = new Text("Total Sales:");
 		
@@ -612,7 +612,7 @@ public class LoginPage extends Application {
 		
 		mngListings.setOnAction(e->{
 			Stage stage = (Stage) root.getScene().getWindow();
-			FileSys.fileWrite(FileSys.fileChoose("Listings"), stage, "Testing additional append for book app");
+			FileSys.fileWrite(FileSys.fileChoose("Listings"), stage, "Testing additional append for book app\n");
 		});
 		
 		mngUsers.setOnAction(e->{
