@@ -7,6 +7,7 @@ public class Library {
 	private ArrayList<Book> bookList = new ArrayList<>();
 	private ArrayList<Listing> activeListings = new ArrayList<>();
 	private ArrayList<Listing> inactiveListings = new ArrayList<>();
+	private ArrayList<Listing> purchasedListings = new ArrayList<>();
 	
 	public Library() {
 		// load any books and listings from text file / database
@@ -14,6 +15,10 @@ public class Library {
 	
 	public int getNumberActiveListings() {
 		return activeListings.size();
+	}
+	
+	public int getNumberPurchasedListings() {
+		return purchasedListings.size();
 	}
 	
 	public void createNewListing(String title, String author, int year, String category, String condition,
@@ -81,6 +86,13 @@ public class Library {
 	
 	public void purchaseListing(Listing listing) {
 		listing.purchaseListing();
+		activeListings.remove(listing);
+		inactiveListings.add(listing);
+		purchasedListings.add(listing);
+	}
+	
+	public void removeListing(Listing listing) {
+		listing.setInactive();
 		activeListings.remove(listing);
 		inactiveListings.add(listing);
 	}
