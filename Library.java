@@ -17,15 +17,36 @@ public class Library {
 	public int getNumberActiveListings() {
 		return activeListings.size();
 	}
-
+	
 	public int getNumberPurchasedListings() {
 		return purchasedListings.size();
 	}
-
+	
 	public int getNumberUsers() {
 		return allUsers.size();
 	}
-
+	
+	public ArrayList<User> loadRelevantUsers(String rolesSelected) {
+		if(rolesSelected.equals("Filter by role")) {
+			return allUsers;
+		} else {
+			ArrayList<User> relevantUsers = new ArrayList<>();
+			
+			User currUser;
+			
+			if(allUsers.size() != 0) {
+				for(int i = 0; i < allUsers.size(); i++) {
+					currUser = allUsers.get(i);
+					if(currUser.getIsAdmin() == rolesSelected.equals("Admin")) {
+						relevantUsers.add(currUser);
+					}
+				}
+			}
+			
+			return relevantUsers;
+		} 
+	}
+	
 	public void addNewUser(String AsuriteID, String password, boolean isAdmin) {
 		if(!userAlreadyExists(AsuriteID)) {
 			allUsers.add(new User(AsuriteID, password, isAdmin));
@@ -44,7 +65,7 @@ public class Library {
 		}
 		return false;
 	}
-
+	
 	public int getUser(String AsuriteID) {
 		if(allUsers.size() > 0) {
 			User currUser;
@@ -98,7 +119,7 @@ public class Library {
 	
 	private void createListing(int book, String condition, float generatedPrice, User seller) {
 		activeListings.add(new Listing(bookList.get(book), condition, generatedPrice, seller));
-		availableListingsFileWrite();
+	
 	}
 	
 	public ArrayList<Listing> loadRelevantListings(String category, boolean likeNewBool, boolean moderateBool, boolean heavyBool) {
@@ -127,16 +148,20 @@ public class Library {
 		activeListings.remove(listing);
 		inactiveListings.add(listing);
 		purchasedListings.add(listing);
-		availableListingsFileWrite();
-		salesRecordFileWrite(listing);
-		buyerRecordFileWrite(listing);
 	}
 	
 	public void removeListing(Listing listing) {
 		listing.setInactive();
 		activeListings.remove(listing);
 		inactiveListings.add(listing);
-		availableListingsFileWrite();
+	}
+	
+	public void removeUser(User user) {
+		allUsers.remove(user);
+	}
+	
+	public void toggleUserRole(User user) {
+		user.toggleIsAdmin();
 	}
 	
 	public int authenticateLogin(String AsuriteID, String password, boolean isAdminSelected, boolean isStudentSelected) {
@@ -151,39 +176,9 @@ public class Library {
 			} else {
 				return 0;
 			}
+			
 		}
-	}
-	
-	public void availableListingsFileWrite() {
-		Listing currListing;
-		Book currBook;
-		FileSys.fileWrite("C:\\ASU Used Bookstore Files\\Books available for selling.txt", "");
-		if(activeListings.size() != 0) {
-			for(int i = 0; i < activeListings.size(); i++) {
-				currListing = activeListings.get(i);
-				currBook = currListing.getBook();
-				String listingFormat = String.format("Title: %s\nAuthor: %s\nYear: %s\nCondition: %s\n-------------------------------------------------------\n",
-						currBook.getTitle(), currBook.getAuthor(),currBook.getYear(),currListing.getCondition());
-				FileSys.fileAppend("C:\\ASU Used Bookstore Files\\Books available for selling.txt", listingFormat);
-			}
-		}
-	}
-	
-	public void salesRecordFileWrite(Listing listing) {
-		Float earned = listing.getGeneratedPrice() * .1f;
-		Book book = listing.getBook();
-		String saleFormat = String.format("Title: %s\nEarned: $%.2f\nCategory: %s\n---------------------------------------------\n"
-				, book.getTitle(), earned, book.getCategory());
 		
-		FileSys.fileAppend("C:\\ASU Used Bookstore Files\\Sales records.txt", saleFormat);
 	}
 	
-	public void buyerRecordFileWrite(Listing listing) {
-		Float toSeller = listing.getGeneratedPrice() * .9f;
-		Book book = listing.getBook();
-		String buyerFormat = String.format("Title: %s\nSeller: %s\nEarned: $%.2f\nCategory: %s\n---------------------------------------------\n"
-				, book.getTitle(), listing.getSeller().getAsuriteID(), toSeller, book.getCategory());
-		
-		FileSys.fileAppend("C:\\ASU Used Bookstore Files\\Buying record.txt", buyerFormat);
-	}
 }

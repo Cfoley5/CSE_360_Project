@@ -17,16 +17,6 @@ public class User {
 		this.isAdmin = isAdmin;
 	}
 	
-	public void changeScene(Scene scene, ActionEvent event) {
-		Node source = (Node) event.getSource();
-		Stage stage = (Stage) source.getScene().getWindow();
-		stage.setScene(scene);
-	}
-	
-	public void logOut() {
-		System.out.println("Hi");
-	}
-	
 	public String getAsuriteID() {
 		return AsuriteID;
 	}
@@ -37,6 +27,20 @@ public class User {
 	
 	public boolean getIsAdmin() {
 		return isAdmin;
+	}
+	
+	public void toggleIsAdmin() {
+		isAdmin = !isAdmin;
+	}
+	
+	public void changeScene(Scene scene, ActionEvent event) {
+		Node source = (Node) event.getSource();
+		Stage stage = (Stage) source.getScene().getWindow();
+		stage.setScene(scene);
+	}
+	
+	public void logOut() {
+		System.out.println("Hi");
 	}
 	
 	
