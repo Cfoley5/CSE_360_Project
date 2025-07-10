@@ -24,9 +24,12 @@ public class LoginPage extends Application {
 	@Override
     public void start(Stage primaryStage) {
 		
-		User user = new User("Name", "Pass");
+		User user = new User("Name", "Pass", true);
 		
 		Library library = new Library();
+		
+		library.addNewUser("testStudent", "password", false);
+		library.addNewUser("testAdmin", "password123", true);
 		
 		library.createNewListing("Words of Radiance", "Brandon Sanderson", 2014, "Other", "Used like new",
 				19.99f, 17.99f, user);
@@ -85,6 +88,26 @@ public class LoginPage extends Application {
 			}
 			else if(studentAdmin.getSelectedToggle() == null) {
 				errorTxt.setText("Please select Student or Admin role to continue");
+			} else {
+				int loginAttempt = library.authenticateLogin(idField.getText(), passwordField.getText(), studentAdmin.getSelectedToggle() == adminBtn, studentAdmin.getSelectedToggle() == studentBtn);
+				if(loginAttempt == 0) {
+					if(studentAdmin.getSelectedToggle() == adminBtn){
+						user.changeScene(createAdminScene(user, library), a);
+					}
+					else if(studentAdmin.getSelectedToggle() == studentBtn) {
+						user.changeScene(createSelectionScene(user, library), a);
+					}
+				} else {
+					errorTxt.setText("Incorrect ASU ID or password");
+				}
+			}
+			
+			/*
+			if(idField.getText().equalsIgnoreCase("") || passwordField.getText().equalsIgnoreCase("")) {
+				errorTxt.setText("Incorrect ASU ID or password");
+			}
+			else if(studentAdmin.getSelectedToggle() == null) {
+				errorTxt.setText("Please select Student or Admin role to continue");
 			}
 			else if(studentAdmin.getSelectedToggle() == adminBtn){
 				user.changeScene(createAdminScene(user, library), a);
@@ -92,6 +115,7 @@ public class LoginPage extends Application {
 			else if(studentAdmin.getSelectedToggle() == studentBtn) {
 				user.changeScene(createSelectionScene(user, library), a);
 			}
+			*/
         });
 	
 		// add to scene //
@@ -598,7 +622,7 @@ public class LoginPage extends Application {
 		Text adminView = new Text("Sun Devil Used Bookstore Admin");
 		Text dashSummary = new Text("Dashboard Summary");
 		Text dashListings = new Text("Active Listings: " + library.getNumberActiveListings());
-		Text dashUsers = new Text("Total Users:");
+		Text dashUsers = new Text("Total Users: " + library.getNumberUsers());
 		Text dashBooks = new Text("Total Sales: " + library.getNumberPurchasedListings());
 		
 		dashSummary.setFont(new Font(18));

@@ -8,6 +8,7 @@ public class Library {
 	private ArrayList<Listing> activeListings = new ArrayList<>();
 	private ArrayList<Listing> inactiveListings = new ArrayList<>();
 	private ArrayList<Listing> purchasedListings = new ArrayList<>();
+	private ArrayList<User> allUsers = new ArrayList<>();
 	
 	public Library() {
 		// load any books and listings from text file / database
@@ -19,6 +20,43 @@ public class Library {
 	
 	public int getNumberPurchasedListings() {
 		return purchasedListings.size();
+	}
+	
+	public int getNumberUsers() {
+		return allUsers.size();
+	}
+	
+	public void addNewUser(String AsuriteID, String password, boolean isAdmin) {
+		if(!userAlreadyExists(AsuriteID)) {
+			allUsers.add(new User(AsuriteID, password, isAdmin));
+		}
+	}
+
+	private boolean userAlreadyExists(String AsuriteID) {
+		if(allUsers.size() > 0) {
+			User currUser;
+			for(int i = 0; i < allUsers.size(); i++) {
+				currUser = allUsers.get(i);
+				if(currUser.getAsuriteID().equals(AsuriteID)) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	
+	public int getUser(String AsuriteID) {
+		if(allUsers.size() > 0) {
+			User currUser;
+			int i;
+			for(i = 0; i < allUsers.size(); i++) {
+				currUser = allUsers.get(i);
+				if(currUser.getAsuriteID().equals(AsuriteID)) {
+					return i;
+				}
+			}
+		}
+		return -1;
 	}
 	
 	public void createNewListing(String title, String author, int year, String category, String condition,
@@ -95,6 +133,23 @@ public class Library {
 		listing.setInactive();
 		activeListings.remove(listing);
 		inactiveListings.add(listing);
+	}
+	
+	public int authenticateLogin(String AsuriteID, String password, boolean isAdminSelected, boolean isStudentSelected) {
+		if(!userAlreadyExists(AsuriteID)) {
+			return -1;
+		} else if(!isAdminSelected && !isStudentSelected) {
+				return -2;
+			} else {
+				User user = allUsers.get(getUser(AsuriteID));
+				if((!user.getPassword().equals(password)) || (user.getIsAdmin() != isAdminSelected)) {
+				return -1;
+			} else {
+				return 0;
+			}
+			
+		}
+		
 	}
 	
 }
