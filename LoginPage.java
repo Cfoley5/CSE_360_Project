@@ -48,6 +48,8 @@ public class LoginPage extends Application {
 		library.createNewListing("nine", "Brandon Sanderson", 2014, "Other", "Moderately used",
 				19.99f, 17.99f, user);
 		
+		FileSys.fileWrite("C:\\ASU Used Bookstore Files\\Sales records.txt", "");
+		FileSys.fileWrite("C:\\ASU Used Bookstore Files\\Buying record.txt", "");
 
 		primaryStage.setScene(createLoginScene(user, library));
 		
@@ -260,8 +262,6 @@ public class LoginPage extends Application {
 			
 			library.createNewListing(titleText.getText(), authText.getText(), Integer.parseInt(yearText.getText()), categoryBox.getValue(), conditionBox.getValue(),
 					Float.parseFloat(originalPrice.getText()), Float.parseFloat(generatedPrice.getText()), user);
-			Stage stage = (Stage) root.getScene().getWindow();
-			FileSys.fileWrite(FileSys.fileChoose("Listings"), stage, "Testing testing for book app");
 			
 			authText.setEditable(true);
 			yearText.setEditable(true);
@@ -611,8 +611,7 @@ public class LoginPage extends Application {
 		Button logOut = new Button("Logout");
 		
 		mngListings.setOnAction(e->{
-			Stage stage = (Stage) root.getScene().getWindow();
-			FileSys.fileWrite(FileSys.fileChoose("Listings"), stage, "Testing additional append for book app");
+			
 		});
 		
 		mngUsers.setOnAction(e->{

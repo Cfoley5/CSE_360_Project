@@ -51,7 +51,7 @@ public class Library {
 	
 	private void createListing(int book, String condition, float generatedPrice, User seller) {
 		activeListings.add(new Listing(bookList.get(book), condition, generatedPrice, seller));
-	
+		availableListingsFileWrite();
 	}
 	
 	public ArrayList<Listing> loadRelevantListings(String category, boolean likeNewBool, boolean moderateBool, boolean heavyBool) {
@@ -79,6 +79,41 @@ public class Library {
 		listing.purchaseListing();
 		activeListings.remove(listing);
 		inactiveListings.add(listing);
+		availableListingsFileWrite();
+		salesRecordFileWrite(listing);
+		buyerRecordFileWrite(listing);
 	}
 	
+	public void availableListingsFileWrite() {
+		Listing currListing;
+		Book currBook;
+		FileSys.fileWrite("C:\\ASU Used Bookstore Files\\Books available for selling.txt", "");
+		if(activeListings.size() != 0) {
+			for(int i = 0; i < activeListings.size(); i++) {
+				currListing = activeListings.get(i);
+				currBook = currListing.getBook();
+				String listingFormat = String.format("Title: %s\nAuthor: %s\nYear: %s\nCondition: %s\n-------------------------------------------------------\n",
+						currBook.getTitle(), currBook.getAuthor(),currBook.getYear(),currListing.getCondition());
+				FileSys.fileAppend("C:\\ASU Used Bookstore Files\\Books available for selling.txt", listingFormat);
+			}
+		}
+	}
+	
+	public void salesRecordFileWrite(Listing listing) {
+		Float earned = listing.getGeneratedPrice() * .1f;
+		Book book = listing.getBook();
+		String saleFormat = String.format("Title: %s\nEarned: $%.2f\nCategory: %s\n---------------------------------------------\n"
+				, book.getTitle(), earned, book.getCategory());
+		
+		FileSys.fileAppend("C:\\ASU Used Bookstore Files\\Sales records.txt", saleFormat);
+	}
+	
+	public void buyerRecordFileWrite(Listing listing) {
+		Float toSeller = listing.getGeneratedPrice() * .9f;
+		Book book = listing.getBook();
+		String buyerFormat = String.format("Title: %s\nSeller: %s\nEarned: $%.2f\nCategory: %s\n---------------------------------------------\n"
+				, book.getTitle(), listing.getSeller().getID(), toSeller, book.getCategory());
+		
+		FileSys.fileAppend("C:\\ASU Used Bookstore Files\\Buying record.txt", buyerFormat);
+	}
 }
