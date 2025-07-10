@@ -7,7 +7,12 @@ import javafx.stage.Stage;
 
 public class User {
 	
+	private String AsuriteID;
+	private String password;
+	
 	public User(String AsuriteID, String password) {
+		this.AsuriteID = AsuriteID;
+		this.password = password;
 	}
 	
 	public void changeScene(Scene scene, ActionEvent event) {
@@ -18,6 +23,10 @@ public class User {
 	
 	public void logOut() {
 		System.out.println("Hi");
+	}
+	
+	public String getID() {
+		return AsuriteID;
 	}
 	
 	
