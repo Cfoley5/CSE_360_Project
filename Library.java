@@ -26,6 +26,27 @@ public class Library {
 		return allUsers.size();
 	}
 	
+	public ArrayList<User> loadRelevantUsers(String rolesSelected) {
+		if(rolesSelected.equals("Filter by role")) {
+			return allUsers;
+		} else {
+			ArrayList<User> relevantUsers = new ArrayList<>();
+			
+			User currUser;
+			
+			if(allUsers.size() != 0) {
+				for(int i = 0; i < allUsers.size(); i++) {
+					currUser = allUsers.get(i);
+					if(currUser.getIsAdmin() == rolesSelected.equals("Admin")) {
+						relevantUsers.add(currUser);
+					}
+				}
+			}
+			
+			return relevantUsers;
+		} 
+	}
+	
 	public void addNewUser(String AsuriteID, String password, boolean isAdmin) {
 		if(!userAlreadyExists(AsuriteID)) {
 			allUsers.add(new User(AsuriteID, password, isAdmin));
@@ -133,6 +154,14 @@ public class Library {
 		listing.setInactive();
 		activeListings.remove(listing);
 		inactiveListings.add(listing);
+	}
+	
+	public void removeUser(User user) {
+		allUsers.remove(user);
+	}
+	
+	public void toggleUserRole(User user) {
+		user.toggleIsAdmin();
 	}
 	
 	public int authenticateLogin(String AsuriteID, String password, boolean isAdminSelected, boolean isStudentSelected) {
